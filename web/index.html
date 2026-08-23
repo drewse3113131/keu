@@ -1,454 +1,65 @@
 <!DOCTYPE html>
 <html lang="ru" class="dark">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>UC License Center</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
-    <script>
-        tailwind.config = {
-            darkMode: 'class',
-            theme: {
-                extend: {
-                    fontFamily: { sans: ['"Plus Jakarta Sans"', 'sans-serif'] }
-                }
-            }
-        }
-    </script>
-</head>
-<body class="bg-[#07090e] text-slate-100 min-h-screen antialiased selection:bg-sky-500 selection:text-white pb-20">
+<head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><title>UC License Center</title><script src="https://cdn.tailwindcss.com"></script><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"><link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet"><script>tailwind.config={darkMode:'class',theme:{extend:{fontFamily:{sans:['"Plus Jakarta Sans"','sans-serif']}}}};</script></head>
+<body class="bg-[#07090e] text-slate-100 min-h-screen pb-20">
+<div id="toast" class="fixed bottom-6 right-6 z-50 transform translate-y-20 opacity-0 transition-all duration-300 bg-emerald-500 text-white px-5 py-3 rounded-2xl shadow-2xl flex items-center gap-3 font-bold text-sm"><i class="fa-solid fa-circle-check"></i><span id="toast-msg">Готово!</span></div>
+<header class="border-b border-slate-800/80 bg-slate-900/60 backdrop-blur-xl sticky top-0 z-40"><div class="max-w-7xl mx-auto px-6 h-20 flex items-center justify-between"><div class="flex items-center gap-3"><div class="w-11 h-11 rounded-2xl bg-gradient-to-tr from-sky-500 via-indigo-600 to-purple-600 flex items-center justify-center text-white font-black text-xl">UC</div><div><span class="font-extrabold text-lg block">UC License Center</span><span class="text-xs text-slate-400">Панель управления ключами</span></div></div><span class="px-3.5 py-1.5 rounded-full text-xs font-semibold bg-emerald-500/10 text-emerald-400 border border-emerald-500/20">Сервер активен</span></div></header>
+<main class="max-w-7xl mx-auto px-6 pt-10">
+<div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-6"><div class="bg-slate-900/80 border border-slate-800/80 p-6 rounded-3xl flex items-center justify-between"><div><p class="text-slate-400 text-xs font-bold uppercase tracking-wider">Всего</p><h3 class="text-4xl font-black mt-2" id="stat-total">0</h3></div><div class="w-14 h-14 bg-sky-500/10 text-sky-400 rounded-2xl flex items-center justify-center text-2xl"><i class="fa-solid fa-key"></i></div></div><div class="bg-slate-900/80 border border-slate-800/80 p-6 rounded-3xl flex items-center justify-between"><div><p class="text-slate-400 text-xs font-bold uppercase">Свободных</p><h3 class="text-4xl font-black text-emerald-400 mt-2" id="stat-free">0</h3></div><div class="w-14 h-14 bg-emerald-500/10 text-emerald-400 rounded-2xl flex items-center justify-center text-2xl"><i class="fa-solid fa-lock-open"></i></div></div><div class="bg-slate-900/80 border border-slate-800/80 p-6 rounded-3xl flex items-center justify-between"><div><p class="text-slate-400 text-xs font-bold uppercase">Активированных</p><h3 class="text-4xl font-black text-indigo-400 mt-2" id="stat-used">0</h3></div><div class="w-14 h-14 bg-indigo-500/10 text-indigo-400 rounded-2xl flex items-center justify-center text-2xl"><i class="fa-solid fa-shield-check"></i></div></div></div>
 
-    <!-- Toast Notification -->
-    <div id="toast" class="fixed bottom-6 right-6 z-50 transform translate-y-20 opacity-0 transition-all duration-300 bg-emerald-500 text-white px-5 py-3 rounded-2xl shadow-2xl flex items-center gap-3 font-bold text-sm">
-        <i class="fa-solid fa-circle-check text-lg"></i> <span id="toast-msg">Готово!</span>
-    </div>
+<div class="bg-slate-900 border border-slate-800 p-4 rounded-2xl mb-4 grid grid-cols-1 md:grid-cols-3 gap-3">
+<div class="flex items-center gap-2"><span class="text-sm text-slate-400 font-semibold">Префикс:</span><input id="prefix-input" class="bg-slate-950 border border-slate-700 text-white px-3 py-2 rounded-xl w-28 uppercase font-mono" maxlength="10"><button id="prefix-save" class="bg-sky-600 hover:bg-sky-500 text-white px-3 py-2 rounded-xl text-sm font-bold">OK</button></div>
+<div class="flex items-center gap-2"><i class="fa-brands fa-telegram text-sky-400"></i><input id="tg-token" placeholder="Bot token" class="bg-slate-950 border border-slate-700 text-white px-3 py-2 rounded-xl flex-1 text-xs"><input id="tg-chat" placeholder="Chat ID" class="bg-slate-950 border border-slate-700 text-white px-3 py-2 rounded-xl w-32 text-xs"><button id="tg-save" class="bg-sky-600 hover:bg-sky-500 text-white px-3 py-2 rounded-xl text-sm">Сохранить</button><button id="tg-test" class="bg-slate-800 hover:bg-slate-700 text-white px-3 py-2 rounded-xl text-sm">Тест</button></div>
+</div>
 
-    <!-- Header -->
-    <header class="border-b border-slate-800/80 bg-slate-900/60 backdrop-blur-xl sticky top-0 z-40">
-        <div class="max-w-7xl mx-auto px-6 h-20 flex items-center justify-between">
-            <div class="flex items-center gap-3">
-                <div class="w-11 h-11 rounded-2xl bg-gradient-to-tr from-sky-500 via-indigo-600 to-purple-600 flex items-center justify-center shadow-xl shadow-sky-500/20 text-white font-black text-xl">
-                    UC
-                </div>
-                <div>
-                    <span class="font-extrabold text-lg tracking-tight text-white block">UC License Center</span>
-                    <span class="text-xs text-slate-400 font-medium">Админ-панель управления ключами</span>
-                </div>
-            </div>
-            <div class="flex items-center gap-3">
-                <span class="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full text-xs font-semibold bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 shadow-sm">
-                    <span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span> Сервер активен
-                </span>
-            </div>
-        </div>
-    </header>
+<div class="bg-gradient-to-r from-slate-900 to-slate-800/90 border border-slate-800/80 p-6 rounded-3xl mb-4 flex flex-col lg:flex-row items-center justify-between gap-4">
+<div><h2 class="text-lg font-bold flex items-center gap-2"><i class="fa-solid fa-wand-magic-sparkles text-sky-400"></i> Генератор</h2><p class="text-slate-400 text-sm">Формат <code class="text-sky-300 font-mono" id="prefix-preview">UC-XXXX</code></p></div>
+<form id="genForm" class="flex items-end gap-2 flex-wrap"><div class="flex flex-col"><label class="text-xs text-slate-400">Срок</label><select name="days" class="bg-slate-950 border border-slate-700 text-white px-3 py-2.5 rounded-xl"><option value="1">1д</option><option value="7">7д</option><option value="30" selected>30д</option><option value="90">90д</option><option value="365">365д</option><option value="0">Бессрочно</option></select></div><div class="flex flex-col"><label class="text-xs text-slate-400">Кол-во (1-100)</label><input name="count" type="number" min="1" max="100" value="1" class="bg-slate-950 border border-slate-700 text-white px-3 py-2.5 rounded-xl w-20"></div><div class="flex flex-col"><label class="text-xs text-slate-400">Лимит HWID</label><input name="hwid_limit" type="number" min="1" max="10" value="1" class="bg-slate-950 border border-slate-700 text-white px-3 py-2.5 rounded-xl w-20"></div><button type="submit" class="bg-gradient-to-r from-sky-500 to-indigo-600 text-white font-bold px-6 py-3 rounded-2xl flex items-center gap-2"><i class="fa-solid fa-plus"></i> Создать</button></form>
+</div>
 
-    <main class="max-w-7xl mx-auto px-6 pt-10">
+<div id="bulk-bar" class="hidden bg-amber-500/10 border border-amber-500/20 p-3 rounded-2xl mb-4 flex flex-wrap items-center gap-2">
+<span class="text-sm text-amber-300 font-semibold" id="bulk-count">0 выбрано</span>
+<button onclick="bulkAction('delete')" class="bg-rose-600 hover:bg-rose-500 text-white px-3 py-1.5 rounded-xl text-sm"><i class="fa-solid fa-trash"></i> Удалить</button>
+<button onclick="bulkAction('freeze')" class="bg-slate-700 hover:bg-slate-600 text-white px-3 py-1.5 rounded-xl text-sm"><i class="fa-solid fa-snowflake"></i> Заморозить</button>
+<button onclick="bulkAction('unfreeze')" class="bg-emerald-600 hover:bg-emerald-500 text-white px-3 py-1.5 rounded-xl text-sm">Разморозить</button>
+<button onclick="bulkAction('add_time')" class="bg-sky-600 hover:bg-sky-500 text-white px-3 py-1.5 rounded-xl text-sm"><i class="fa-solid fa-clock"></i> +Время</button>
+<button onclick="bulkAction('reset')" class="bg-amber-600 hover:bg-amber-500 text-white px-3 py-1.5 rounded-xl text-sm">Сброс HWID</button>
+<button onclick="clearSelection()" class="ml-auto text-slate-400 text-sm">Снять</button>
+</div>
 
-        <!-- Stats Cards -->
-        <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-10">
-            <div class="relative overflow-hidden bg-slate-900/80 border border-slate-800/80 p-6 rounded-3xl shadow-xl backdrop-blur-md group hover:border-sky-500/50 transition-all">
-                <div class="absolute -right-6 -bottom-6 w-28 h-28 bg-sky-500/10 rounded-full blur-2xl group-hover:bg-sky-500/20 transition-all"></div>
-                <div class="flex items-center justify-between relative z-10">
-                    <div>
-                        <p class="text-slate-400 text-xs font-bold uppercase tracking-wider">Всего ключей</p>
-                        <h3 class="text-4xl font-black text-white mt-2" id="stat-total">0</h3>
-                    </div>
-                    <div class="w-14 h-14 bg-sky-500/10 text-sky-400 rounded-2xl flex items-center justify-center text-2xl border border-sky-500/20">
-                        <i class="fa-solid fa-key"></i>
-                    </div>
-                </div>
-            </div>
+<div class="mb-4 flex gap-4"><div class="relative flex-1 max-w-md"><span class="absolute inset-y-0 left-0 flex items-center pl-4 text-slate-500"><i class="fa-solid fa-search"></i></span><input id="searchInput" placeholder="Поиск ключ/HWID..." class="w-full bg-slate-900 border border-slate-800 pl-11 pr-4 py-3 rounded-2xl text-sm"></div></div>
 
-            <div class="relative overflow-hidden bg-slate-900/80 border border-slate-800/80 p-6 rounded-3xl shadow-xl backdrop-blur-md group hover:border-emerald-500/50 transition-all">
-                <div class="absolute -right-6 -bottom-6 w-28 h-28 bg-emerald-500/10 rounded-full blur-2xl group-hover:bg-emerald-500/20 transition-all"></div>
-                <div class="flex items-center justify-between relative z-10">
-                    <div>
-                        <p class="text-slate-400 text-xs font-bold uppercase tracking-wider">Свободных</p>
-                        <h3 class="text-4xl font-black text-emerald-400 mt-2" id="stat-free">0</h3>
-                    </div>
-                    <div class="w-14 h-14 bg-emerald-500/10 text-emerald-400 rounded-2xl flex items-center justify-center text-2xl border border-emerald-500/20">
-                        <i class="fa-solid fa-lock-open"></i>
-                    </div>
-                </div>
-            </div>
-
-            <div class="relative overflow-hidden bg-slate-900/80 border border-slate-800/80 p-6 rounded-3xl shadow-xl backdrop-blur-md group hover:border-indigo-500/50 transition-all">
-                <div class="absolute -right-6 -bottom-6 w-28 h-28 bg-indigo-500/10 rounded-full blur-2xl group-hover:bg-indigo-500/20 transition-all"></div>
-                <div class="flex items-center justify-between relative z-10">
-                    <div>
-                        <p class="text-slate-400 text-xs font-bold uppercase tracking-wider">Активированных</p>
-                        <h3 class="text-4xl font-black text-indigo-400 mt-2" id="stat-used">0</h3>
-                    </div>
-                    <div class="w-14 h-14 bg-indigo-500/10 text-indigo-400 rounded-2xl flex items-center justify-center text-2xl border border-indigo-500/20">
-                        <i class="fa-solid fa-shield-check"></i>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <!-- Generator Panel -->
-        <div class="bg-gradient-to-r from-slate-900 via-slate-900 to-slate-800/90 border border-slate-800/80 p-8 rounded-3xl shadow-2xl mb-10 flex flex-col md:flex-row items-center justify-between gap-6 backdrop-blur-xl">
-            <div>
-                <h2 class="text-xl font-bold text-white flex items-center gap-3">
-                    <i class="fa-solid fa-wand-magic-sparkles text-sky-400"></i> Генератор лицензий
-                </h2>
-                <p class="text-slate-400 text-sm mt-1">Создавайте новые ключи формата <code class="text-sky-300 font-mono">UC-XXXX</code>.</p>
-            </div>
-            <form id="genForm" class="flex items-center gap-4 w-full md:w-auto">
-                <div class="flex flex-col">
-                    <label class="text-xs text-slate-400 font-semibold mb-1">Срок действия:</label>
-                    <select name="days" class="bg-slate-950 border border-slate-700 text-white font-medium px-4 py-3 rounded-2xl focus:outline-none focus:border-sky-500 transition-all">
-                        <option value="1">1 день (Тест)</option>
-                        <option value="7">7 дней (Неделя)</option>
-                        <option value="30" selected>30 дней (Месяц)</option>
-                        <option value="90">90 дней (3 месяца)</option>
-                        <option value="365">365 дней (Год)</option>
-                        <option value="0">Бессрочно</option>
-                    </select>
-                </div>
-                <button type="submit" class="mt-5 bg-gradient-to-r from-sky-500 to-indigo-600 hover:from-sky-400 hover:to-indigo-500 text-white font-bold px-8 py-3.5 rounded-2xl shadow-xl shadow-sky-500/25 transition-all transform hover:-translate-y-0.5 active:translate-y-0 flex items-center gap-2 whitespace-nowrap">
-                    <i class="fa-solid fa-plus"></i> Создать ключ
-                </button>
-            </form>
-        </div>
-
-        <!-- Search Bar -->
-        <div class="mb-6 flex items-center justify-between gap-4">
-            <div class="relative w-full max-w-md">
-                <span class="absolute inset-y-0 left-0 flex items-center pl-4 pointer-events-none text-slate-500">
-                    <i class="fa-solid fa-search"></i>
-                </span>
-                <input type="text" id="searchInput" onkeyup="filterKeys()" placeholder="Поиск по ключу или HWID..." class="w-full bg-slate-900 border border-slate-800 text-slate-200 pl-11 pr-4 py-3 rounded-2xl focus:outline-none focus:border-sky-500 text-sm shadow-inner transition-all">
-            </div>
-        </div>
-
-        <!-- Keys Table -->
-        <div class="bg-slate-900/90 border border-slate-800/80 rounded-3xl shadow-2xl overflow-hidden backdrop-blur-xl">
-            <div class="p-6 px-8 border-b border-slate-800/80 flex items-center justify-between">
-                <h3 class="font-bold text-lg text-white flex items-center gap-2.5">
-                    <i class="fa-solid fa-database text-sky-400"></i> База ключей
-                </h3>
-                <span class="text-xs text-slate-400 bg-slate-800/80 px-3.5 py-1.5 rounded-xl font-mono border border-slate-700/50" id="total-count">Всего: 0</span>
-            </div>
-            <div class="overflow-x-auto">
-                <table class="w-full text-left border-collapse" id="keysTable">
-                    <thead>
-                        <tr class="bg-slate-950/50 text-slate-400 text-xs font-bold uppercase tracking-wider border-b border-slate-800/80">
-                            <th class="py-4 px-6">#</th>
-                            <th class="py-4 px-6">Лицензионный ключ</th>
-                            <th class="py-4 px-6">Срок / Осталось</th>
-                            <th class="py-4 px-6">Статус</th>
-                            <th class="py-4 px-6">Привязка (HWID)</th>
-                            <th class="py-4 px-6">Создан</th>
-                            <th class="py-4 px-6 text-right">Управление</th>
-                        </tr>
-                    </thead>
-                    <tbody class="divide-y divide-slate-800/50" id="keysBody"></tbody>
-                </table>
-            </div>
-        </div>
-
-    </main>
-
-    <script>
-        // --- Toast ---
-        const toastEl = document.getElementById('toast'), toastMsg = document.getElementById('toast-msg');
-        function showToast(msg) {
-            toastMsg.textContent = msg;
-            toastEl.classList.remove('translate-y-20','opacity-0');
-            setTimeout(() => toastEl.classList.add('translate-y-20','opacity-0'), 2500);
-        }
-
-        // --- Copy Key ---
-        function copyKey(text) {
-            navigator.clipboard.writeText(text).then(() => {
-                showToast("Скопирован: " + text);
-            });
-        }
-
-        // --- Search Filter ---
-        function filterKeys() {
-            const filter = document.getElementById('searchInput').value.toUpperCase();
-            document.querySelectorAll('#keysBody tr').forEach(tr => {
-                const keyText = tr.cells[1].innerText.toUpperCase();
-                const hwidText = tr.cells[4].innerText.toUpperCase();
-                tr.style.display = (keyText.includes(filter) || hwidText.includes(filter)) ? '' : 'none';
-            });
-        }
-
-        // --- API Helpers ---
-        async function apiPost(url, formData) {
-            const res = await fetch(url, { method: 'POST', body: formData });
-            if (!res.ok) throw new Error(`HTTP ${res.status}`);
-            return res.json();
-        }
-
-        // --- Load Keys ---
-        async function loadKeys() {
-            try {
-                const res = await fetch('/admin/keys');
-                const keys = await res.json();
-                const tbody = document.getElementById('keysBody');
-                tbody.innerHTML = '';
-                let total = 0, free = 0;
-
-                keys.forEach(k => {
-                    total++;
-                    if (k.used === 0) free++;
-
-                    const daysText = k.days === 0 ? 'Бессрочно' : `${k.days} дн.`;
-                    const expiresHtml = k.expires_at && k.expires_at !== 'Бессрочно' 
-                        ? `<div class="text-xs text-slate-500 mt-0.5">До: ${k.expires_at}</div>` 
-                        : '';
-
-                    const statusHtml = k.used === 1
-                        ? `<span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold bg-indigo-500/10 text-indigo-400 border border-indigo-500/20"><span class="w-2 h-2 rounded-full bg-indigo-400 animate-pulse"></span> Активирован</span>`
-                        : `<span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold bg-emerald-500/10 text-emerald-400 border border-emerald-500/20"><span class="w-2 h-2 rounded-full bg-emerald-400"></span> Свободен</span>`;
-
-                    const hwidDisplay = k.hwid || '— не привязан —';
-
-                    // Формы теперь с data-id для JS обработки
-                    const actionsHtml = `
-                        <div class="flex items-center justify-end gap-2">
-                            ${k.used === 1 ? `
-                            <form class="action-form" data-action="reset" data-id="${k.id}" style="margin:0;">
-                                <button type="submit" class="bg-amber-500/10 hover:bg-amber-500/20 text-amber-400 border border-amber-500/20 p-2.5 rounded-xl text-xs font-semibold transition-all flex items-center justify-center shadow-md" title="Сбросить HWID привязку">
-                                    <i class="fa-solid fa-rotate-left"></i>
-                                </button>
-                            </form>` : ''}
-                            <form class="action-form" data-action="delete" data-id="${k.id}" style="margin:0;">
-                                <button type="submit" class="bg-rose-500/10 hover:bg-rose-500/20 text-rose-400 border border-rose-500/20 p-2.5 rounded-xl text-xs font-semibold transition-all flex items-center justify-center shadow-md" title="Удалить ключ">
-                                    <i class="fa-solid fa-trash-can"></i>
-                                </button>
-                            </form>
-                        </div>
-                    `;
-
-                    document.getElementById('keysBody').innerHTML += `
-                        <tr id="row-${k.id}" class="hover:bg-slate-800/40 transition-colors group">
-                            <td class="py-4 px-6 text-slate-500 font-mono text-xs">#${k.id}</td>
-                            <td class="py-4 px-6">
-                                <button onclick="copyKey('${k.key}')" class="inline-flex items-center gap-2.5 bg-slate-950 hover:bg-slate-900 border border-slate-800 hover:border-sky-500/50 px-3.5 py-2 rounded-xl text-sky-300 font-mono font-bold shadow-inner transition-all" title="Нажмите, чтобы скопировать">
-                                    <span>${k.key}</span>
-                                    <i class="fa-regular fa-copy text-slate-500 hover:text-sky-400 transition-colors"></i>
-                                </button>
-                            </td>
-                            <td class="py-4 px-6 text-sm text-slate-300">
-                                <span class="font-medium">${k.days === 0 ? 'Бессрочно' : k.days + ' дн.'}</span>
-                                ${k.expires_at && k.expires_at !== 'Бессрочно' ? `<div class="text-xs text-slate-500 mt-0.5">До: ${k.expires_at}</div>` : ''}
-                            </td>
-                            <td class="py-4 px-6">${k.used === 1 
-                                ? `<span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold bg-indigo-500/10 text-indigo-400 border border-indigo-500/20"><span class="w-2 h-2 rounded-full bg-indigo-400 animate-pulse"></span> Активирован</span>`
-                                : `<span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold bg-emerald-500/10 text-emerald-400 border border-emerald-500/20"><span class="w-2 h-2 rounded-full bg-emerald-400"></span> Свободен</span>`}
-                            </td>
-                            <td class="py-4 px-6 font-mono text-xs text-slate-400 max-w-[180px] truncate" title="${k.hwid}">${k.hwid || '—'}</td>
-                            <td class="py-4 px-6 text-slate-400 text-xs">${k.created_at}</td>
-                            <td class="py-4 px-6 text-right">${k.used === 1 ? `
-                            <form class="action-form" data-action="reset" data-id="${k.id}" style="margin:0;">
-                                <button type="submit" class="bg-amber-500/10 hover:bg-amber-500/20 text-amber-400 border border-amber-500/20 p-2.5 rounded-xl text-xs font-semibold transition-all flex items-center justify-center shadow-md" title="Сбросить HWID привязку">
-                                    <i class="fa-solid fa-rotate-left"></i>
-                                </button>
-                            </form>` : ''}
-                            <form class="action-form" data-action="delete" data-id="${k.id}" style="margin:0;">
-                                <button type="submit" class="bg-rose-500/10 hover:bg-rose-500/20 text-rose-400 border border-rose-500/20 p-2.5 rounded-xl text-xs font-semibold transition-all flex items-center justify-center shadow-md" title="Удалить ключ">
-                                    <i class="fa-solid fa-trash-can"></i>
-                                </button>
-                            </form>
-                            </td>
-                        </tr>
-                    `;
-                });
-
-                document.getElementById('stat-total').innerText = total;
-                document.getElementById('stat-free').innerText = free;
-                document.getElementById('stat-used').innerText = total - free;
-                document.getElementById('total-count').innerText = `Всего: ${total}`;
-
-                // Вешаем обработчики на новые формы
-                attachFormHandlers();
-            } catch (e) {
-                console.error(e);
-            }
-        }
-
-        // --- Attach Form Handlers ---
-        function attachFormHandlers() {
-            document.querySelectorAll('.action-form').forEach(form => {
-                form.addEventListener('submit', async (e) => {
-                    e.preventDefault();
-                    const action = form.dataset.action;
-                    const id = form.dataset.id;
-                    const url = `/admin/${action}/${id}`;
-                    
-                    try {
-                        const res = await fetch(url, { method: 'POST' });
-                        if (!res.ok) throw new Error(`HTTP ${res.status}`);
-                        
-                        if (action === 'delete') {
-                            // Удаляем строку из DOM
-                            document.getElementById(`row-${id}`).remove();
-                            showToast('Ключ удален');
-                            // Обновляем счетчики
-                            const totalEl = document.getElementById('stat-total');
-                            const freeEl = document.getElementById('stat-free');
-                            const usedEl = document.getElementById('stat-used');
-                            const totalCountEl = document.getElementById('total-count');
-                            if (totalEl) {
-                                const t = parseInt(totalEl.innerText) - 1;
-                                totalEl.innerText = t;
-                                totalCountEl.innerText = `Всего: ${t}`;
-                                // Примечание: не знаем был ли ключ free/used, проще перезагрузить счетчики через loadKeys() или просто уменьшить total
-                            }
-                        } else if (action === 'reset') {
-                            showToast('HWID сброшен');
-                        }
-                        // Просто перезагружаем таблицу для гарантии актуальности счетчиков и статусов
-                        loadKeys();
-                    } catch (err) {
-                        console.error(err);
-                        showToast('Ошибка: ' + err.message);
-                    }
-                });
-            });
-        }
-
-        // --- Toast ---
-        const toastEl = document.getElementById('toast'), toastMsg = document.getElementById('toast-msg');
-        function showToast(msg) {
-            toastMsg.textContent = msg;
-            toastEl.classList.remove('translate-y-20','opacity-0');
-            setTimeout(() => toastEl.classList.add('translate-y-20','opacity-0'), 2500);
-        }
-
-        // --- Copy Key ---
-        function copyKey(text) {
-            navigator.clipboard.writeText(text).then(() => showToast("Скопирован: " + text));
-        }
-
-        // --- Search Filter ---
-        function filterKeys() {
-            const filter = document.getElementById('searchInput').value.toUpperCase();
-            document.querySelectorAll('#keysBody tr').forEach(tr => {
-                const keyText = tr.cells[1].innerText.toUpperCase();
-                const hwidText = tr.cells[4].innerText.toUpperCase();
-                tr.style.display = (keyText.includes(filter) || hwidText.includes(filter)) ? '' : 'none';
-            });
-        }
-
-        // --- Load Keys ---
-        async function loadKeys() {
-            try {
-                const res = await fetch('/admin/keys');
-                const keys = await res.json();
-                const tbody = document.getElementById('keysBody');
-                tbody.innerHTML = '';
-                let total = 0, free = 0;
-
-                keys.forEach(k => {
-                    total++;
-                    if (k.used === 0) free++;
-
-                    const daysText = k.days === 0 ? 'Бессрочно' : `${k.days} дн.`;
-                    const expiresHtml = k.expires_at && k.expires_at !== 'Бессрочно' 
-                        ? `<div class="text-xs text-slate-500 mt-0.5">До: ${k.expires_at}</div>` 
-                        : '';
-
-                    const statusHtml = k.used === 1
-                        ? `<span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold bg-indigo-500/10 text-indigo-400 border border-indigo-500/20"><span class="w-2 h-2 rounded-full bg-indigo-400 animate-pulse"></span> Активирован</span>`
-                        : `<span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold bg-emerald-500/10 text-emerald-400 border border-emerald-500/20"><span class="w-2 h-2 rounded-full bg-emerald-400"></span> Свободен</span>`;
-
-                    const hwidDisplay = k.hwid || '— не привязан —';
-
-                    const actionsHtml = `
-                        <div class="flex items-center justify-end gap-2">
-                            ${k.used === 1 ? `
-                            <form class="action-form" data-action="reset" data-id="${k.id}" style="margin:0;">
-                                <button type="submit" class="bg-amber-500/10 hover:bg-amber-500/20 text-amber-400 border border-amber-500/20 p-2.5 rounded-xl text-xs font-semibold transition-all flex items-center justify-center shadow-md" title="Сбросить HWID привязку">
-                                    <i class="fa-solid fa-rotate-left"></i>
-                                </button>
-                            </form>` : ''}
-                            <form class="action-form" data-action="delete" data-id="${k.id}" style="margin:0;">
-                                <button type="submit" class="bg-rose-500/10 hover:bg-rose-500/20 text-rose-400 border border-rose-500/20 p-2.5 rounded-xl text-xs font-semibold transition-all flex items-center justify-center shadow-md" title="Удалить ключ">
-                                    <i class="fa-solid fa-trash-can"></i>
-                                </button>
-                            </form>
-                        </div>
-                    `;
-
-                    document.getElementById('keysBody').innerHTML += `
-                        <tr id="row-${k.id}" class="hover:bg-slate-800/40 transition-colors group">
-                            <td class="py-4 px-6 text-slate-500 font-mono text-xs">#${k.id}</td>
-                            <td class="py-4 px-6">
-                                <button onclick="copyKey('${k.key}')" class="inline-flex items-center gap-2.5 bg-slate-950 hover:bg-slate-900 border border-slate-800 hover:border-sky-500/50 px-3.5 py-2 rounded-xl text-sky-300 font-mono font-bold shadow-inner transition-all" title="Нажмите, чтобы скопировать">
-                                    <span>${k.key}</span>
-                                    <i class="fa-regular fa-copy text-slate-500 hover:text-sky-400 transition-colors"></i>
-                                </button>
-                            </td>
-                            <td class="py-4 px-6 text-sm text-slate-300">
-                                <span class="font-medium">${k.days === 0 ? 'Бессрочно' : k.days + ' дн.'}</span>
-                                ${k.expires_at && k.expires_at !== 'Бессрочно' ? `<div class="text-xs text-slate-500 mt-0.5">До: ${k.expires_at}</div>` : ''}
-                            </td>
-                            <td class="py-4 px-6">${k.used === 1 
-                                ? `<span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold bg-indigo-500/10 text-indigo-400 border border-indigo-500/20"><span class="w-2 h-2 rounded-full bg-indigo-400 animate-pulse"></span> Активирован</span>`
-                                : `<span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold bg-emerald-500/10 text-emerald-400 border border-emerald-500/20"><span class="w-2 h-2 rounded-full bg-emerald-400"></span> Свободен</span>`}
-                            </td>
-                            <td class="py-4 px-6 font-mono text-xs text-slate-400 max-w-[180px] truncate" title="${k.hwid}">${k.hwid || '—'}</td>
-                            <td class="py-4 px-6 text-slate-400 text-xs">${k.created_at}</td>
-                            <td class="py-4 px-6 text-right">${actionsHtml}</td>
-                        </tr>
-                    `;
-                });
-
-                document.getElementById('stat-total').innerText = total;
-                document.getElementById('stat-free').innerText = free;
-                document.getElementById('stat-used').innerText = total - free;
-                document.getElementById('total-count').innerText = `Всего: ${total}`;
-
-                attachFormHandlers();
-            } catch (e) {
-                console.error(e);
-            }
-        }
-
-        // --- Generate Key ---
-        document.getElementById('genForm').addEventListener('submit', async e => {
-            e.preventDefault();
-            const formData = new FormData(e.target);
-            const res = await fetch('/admin/generate', { method: 'POST', body: formData });
-            const json = await res.json();
-            showToast('Создан ключ: ' + json.key);
-            loadKeys();
-        });
-
-        // --- Toast ---
-        const toastEl = document.getElementById('toast'), toastMsg = document.getElementById('toast-msg');
-        function showToast(msg) {
-            toastMsg.textContent = msg;
-            toastEl.classList.remove('translate-y-20','opacity-0');
-            setTimeout(() => toastEl.classList.add('translate-y-20','opacity-0'), 2500);
-        }
-
-        // --- Copy Key ---
-        function copyKey(text) {
-            navigator.clipboard.writeText(text).then(() => showToast("Скопирован: " + text));
-        }
-
-        // --- Search Filter ---
-        function filterKeys() {
-            const filter = document.getElementById('searchInput').value.toUpperCase();
-            document.querySelectorAll('#keysBody tr').forEach(tr => {
-                const keyText = tr.cells[1].innerText.toUpperCase();
-                const hwidText = tr.cells[4].innerText.toUpperCase();
-                tr.style.display = (keyText.includes(filter) || hwidText.includes(filter)) ? '' : 'none';
-            });
-        }
-
-        // --- Init ---
-        loadKeys();
-        setInterval(loadKeys, 10000);
-    </script>
+<div class="bg-slate-900/90 border border-slate-800/80 rounded-3xl overflow-hidden"><div class="p-4 px-6 border-b border-slate-800/80 flex justify-between items-center"><h3 class="font-bold flex items-center gap-2"><i class="fa-solid fa-database text-sky-400"></i> База ключей</h3><span id="total-count" class="text-xs bg-slate-800 px-3 py-1 rounded-xl font-mono">Всего: 0</span></div><div class="overflow-x-auto"><table class="w-full text-left border-collapse"><thead><tr class="bg-slate-950/50 text-slate-400 text-xs font-bold uppercase border-b border-slate-800/80"><th class="py-3 px-3"><input type="checkbox" id="select-all"></th><th class="py-3 px-3">#</th><th class="py-3 px-3">Ключ</th><th class="py-3 px-3">Срок</th><th class="py-3 px-3">Статус</th><th class="py-3 px-3">HWID (лимит)</th><th class="py-3 px-3">Создан</th><th class="py-3 px-3 text-right">Действия</th></tr></thead><tbody id="keysBody" class="divide-y divide-slate-800/50"></tbody></table></div></div>
+</main>
+<script>
+const toastEl=document.getElementById('toast'),toastMsg=document.getElementById('toast-msg');
+function showToast(m,c='bg-emerald-500'){toastEl.className=`fixed bottom-6 right-6 z-50 bg-emerald-500 text-white px-5 py-3 rounded-2xl shadow-2xl flex items-center gap-3 font-bold text-sm ${c}`;toastMsg.textContent=m;toastEl.classList.remove('translate-y-20','opacity-0');setTimeout(()=>toastEl.classList.add('translate-y-20','opacity-0'),2500);}
+function copyKey(t){navigator.clipboard.writeText(t).then(()=>showToast("Скопирован: "+t));}
+async function loadPrefix(){try{const r=await fetch('/admin/settings');const j=await r.json();const p=(j.prefix||'UC').toUpperCase();document.getElementById('prefix-input').value=p;document.getElementById('prefix-preview').textContent=p+'-XXXX';document.getElementById('tg-token').value=j.tg_token||'';document.getElementById('tg-chat').value=j.tg_chat||'';}catch{}}
+document.getElementById('prefix-save').onclick=async()=>{const v=document.getElementById('prefix-input').value.trim().toUpperCase();if(!v)return showToast('Введите префикс','bg-rose-500');const r=await fetch('/admin/settings',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({prefix:v})});if(r.ok){showToast('Префикс '+v);document.getElementById('prefix-preview').textContent=v+'-XXXX';}else showToast('Ошибка','bg-rose-500');};
+document.getElementById('tg-save').onclick=async()=>{const t=document.getElementById('tg-token').value.trim(),ch=document.getElementById('tg-chat').value.trim();const r=await fetch('/admin/settings',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({tg_token:t,tg_chat:ch})});if(r.ok) showToast('Telegram сохранён'); else showToast('Ошибка','bg-rose-500');};
+document.getElementById('tg-test').onclick=async()=>{const r=await fetch('/admin/telegram/test',{method:'POST'});if(r.ok) showToast('Тест отправлен'); else showToast('Ошибка теста','bg-rose-500');};
+function filterKeys(){const f=document.getElementById('searchInput').value.toUpperCase();document.querySelectorAll('#keysBody tr').forEach(tr=>{tr.style.display=(tr.innerText.toUpperCase().includes(f))?'':'none';});}
+document.getElementById('searchInput').addEventListener('input',filterKeys);
+let selected=new Set();
+function updateBulkBar(){const bar=document.getElementById('bulk-bar'),cnt=document.getElementById('bulk-count');if(selected.size>0){bar.classList.remove('hidden');cnt.textContent=selected.size+' выбрано';}else bar.classList.add('hidden');}
+function clearSelection(){selected.clear();document.querySelectorAll('.row-check').forEach(c=>c.checked=false);document.getElementById('select-all').checked=false;updateBulkBar();}
+document.getElementById('select-all').addEventListener('change',e=>{const v=e.target.checked;document.querySelectorAll('.row-check').forEach(c=>{c.checked=v;const id=parseInt(c.dataset.id);if(v) selected.add(id); else selected.delete(id);});updateBulkBar();});
+async function bulkAction(act){
+ if(selected.size===0) return showToast('Ничего не выбрано','bg-amber-500');
+ let days=0; if(act==='add_time'){const v=prompt('Сколько дней добавить?','7');if(!v) return; days=parseInt(v); if(!(days>0)) return showToast('Неверно','bg-rose-500');}
+ if(act==='delete' && !confirm('Удалить '+selected.size+' ключей?')) return;
+ const body={ids:[...selected],action:act}; if(act==='add_time') body.days=days;
+ const r=await fetch('/admin/bulk',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(body)});
+ if(r.ok){showToast('Готово: '+act);clearSelection();loadKeys();} else showToast('Ошибка '+(await r.text()),'bg-rose-500');
+}
+async function loadKeys(){try{const r=await fetch('/admin/keys');const keys=await r.json();if(!Array.isArray(keys)) throw new Error('bad');const tb=document.getElementById('keysBody');tb.innerHTML='';let total=0,free=0;keys.forEach(k=>{total++;if(k.used===0) free++;const frozen=k.frozen===1;const row=document.createElement('tr');row.className=frozen?'bg-rose-950/30 hover:bg-rose-900/20':'hover:bg-slate-800/40';const hwids=k.hwids?JSON.parse(k.hwids||'[]'):[];const hcnt=hwids.length||(k.hwid?1:0);row.innerHTML=`<td class="py-3 px-3"><input type="checkbox" class="row-check" data-id="${k.id}"></td><td class="py-3 px-3 text-slate-500 font-mono text-xs">#${k.id}</td><td class="py-3 px-3"><button onclick="copyKey('${k.key}')" class="bg-slate-950 border ${frozen?'border-rose-800 text-rose-300':'border-slate-800 text-sky-300'} px-2.5 py-1.5 rounded-xl font-mono font-bold text-xs">${k.key} ${frozen?'<i class=\"fa-solid fa-snowflake ml-1\"></i>':''}</button></td><td class="py-3 px-3 text-xs">${k.days===0?'Бессрочно':k.days+' дн.'}${k.expires_at&&k.expires_at!=='Бессрочно'?`<div class="text-[11px] text-slate-500">${k.expires_at}</div>`:''}</td><td class="py-3 px-3">${frozen?'<span class="px-2 py-1 rounded-full text-[11px] font-bold bg-rose-500/20 text-rose-300 border border-rose-500/30">Заморожен</span>':k.used===1?'<span class="px-2 py-1 rounded-full text-[11px] bg-indigo-500/20 text-indigo-300 border border-indigo-500/30">Активен</span>':'<span class="px-2 py-1 rounded-full text-[11px] bg-emerald-500/20 text-emerald-300 border border-emerald-500/30">Свободен</span>'}</td><td class="py-3 px-3 font-mono text-xs max-w-[160px] truncate" title="${(k.hwids||k.hwid||'')}">${(k.hwid||'—')} <span class="text-slate-500">(${hcnt}/${k.hwid_limit||1})</span></td><td class="py-3 px-3 text-xs text-slate-400">${(k.created_at||'').slice(0,19)}</td><td class="py-3 px-3 text-right"><div class="flex justify-end gap-1"><button data-act="add-time" data-id="${k.id}" class="p-2 bg-sky-500/10 text-sky-400 border border-sky-500/20 rounded-xl text-xs" title="+Время"><i class="fa-solid fa-clock"></i></button><button data-act="freeze" data-id="${k.id}" class="p-2 ${frozen?'bg-emerald-500/10 text-emerald-400 border-emerald-500/20':'bg-slate-700 text-slate-300'} rounded-xl text-xs" title="${frozen?'Разморозить':'Заморозить'}"><i class="fa-solid ${frozen?'fa-fire':'fa-snowflake'}"></i></button>${k.used===1?`<button data-act="reset" data-id="${k.id}" class="p-2 bg-amber-500/10 text-amber-400 border border-amber-500/20 rounded-xl"><i class="fa-solid fa-rotate-left"></i></button>`:''}<button data-act="delete" data-id="${k.id}" class="p-2 bg-rose-500/10 text-rose-400 border border-rose-500/20 rounded-xl"><i class="fa-solid fa-trash"></i></button></div></td>`;tb.appendChild(row);});
+ document.getElementById('stat-total').textContent=total;document.getElementById('stat-free').textContent=free;document.getElementById('stat-used').textContent=total-free;document.getElementById('total-count').textContent='Всего: '+total;
+ document.querySelectorAll('.row-check').forEach(c=>c.addEventListener('change',e=>{const id=parseInt(e.target.dataset.id);if(e.target.checked) selected.add(id); else selected.delete(id); updateBulkBar();}));
+ document.querySelectorAll('[data-act]').forEach(b=>{b.onclick=async()=>{const a=b.dataset.act,i=b.dataset.id;if(a==='add-time'){const v=prompt('Сколько дней добавить?','7');if(!v) return;const d=parseInt(v);if(!(d>0)) return;const r=await fetch(`/admin/add-time/${i}`,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({days:d})});if(r.ok){showToast('Добавлено '+d);loadKeys();} else showToast('Ошибка','bg-rose-500'); return;} if(a==='freeze' || a==='delete'){if(!confirm((a==='freeze'?'Заморозить':'Удалить')+' #'+i+'?')) return;}const url=a==='freeze'? (b.innerHTML.includes('fa-fire')?`/admin/unfreeze/${i}`:`/admin/freeze/${i}`) : `/admin/${a}/${i}`;const r=await fetch(url,{method:'POST'});if(r.ok){showToast('Готово');loadKeys();} else showToast('Ошибка','bg-rose-500');};});
+ }catch(e){console.error(e);}}
+document.getElementById('genForm').addEventListener('submit',async e=>{e.preventDefault();const fd=new FormData(e.target);const r=await fetch('/admin/generate',{method:'POST',body:fd});if(!r.ok) return showToast('Ошибка','bg-rose-500');const j=await r.json();if(j.keys){showToast('Создано '+j.count+' ключей');} else showToast('Создан '+j.key);loadKeys();});
+loadPrefix();loadKeys();setInterval(loadKeys,10000);
+</script>
 </body>
 </html>
